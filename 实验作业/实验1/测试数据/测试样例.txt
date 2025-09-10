@@ -1,0 +1,205 @@
+测试样例1：
+use std::io;
+use rand::Rng;
+use std::cmp::Ordering;
+
+fn main() {
+    println!("猜数字游戏 v2.0");
+    let secret = rand::thread_rng().gen_range(1 .. =100);
+    let mut attempts = 0;
+    let mut streak = 0;
+    
+    loop {
+        println!("请输入1-100的整数 (输入q退出):");
+        let mut guess = String::new();
+        
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("读取失败");
+            
+        if guess.trim() == "q" {
+            println!("游戏结束，正确数字是{}", secret);
+            break;
+        }
+        
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("请输入有效数字！");
+                continue;
+            }
+        };
+        
+        attempts += 1;
+        
+        match guess.cmp(&secret) {
+            Ordering::Less => {
+                println!("太小了！");
+                streak = 0;
+            }
+            Ordering::Greater => {
+                println!("太大了！");
+                streak = 0;
+            }
+            Ordering::Equal => {
+                println!("恭喜！用时{}次", attempts);
+                match attempts {
+                    1..=5 => println!("天才玩家！"),
+                    6..=10 => println!("优秀表现！"),
+                    _ => println!("再接再厉！")
+                }
+                break;
+            }
+        }
+        
+        if streak >= 3 {
+            println!("连续猜错{}次，获得提示：{}", 
+                streak, 
+                if secret % 2 == 0 {"偶数"} else {"奇数"}
+            );
+        }
+        streak += 1;
+    }
+}
+
+
+测试样例2：
+use rand::Rng;
+use std::fs::File;
+use std::io::{Read, Write};
+
+fn xor_encrypt(path: &str, key: [u8; 32]) -> std::io::Result<()> {
+    let mut file = File::open(path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+
+    for (i, byte) in buffer.iter_mut().enumerate() {
+        *byte ^= key[i % 32];
+    }
+
+    File::create(format!("{}.enc", path))?
+        .write_all(&buffer)?;
+    Ok(())
+}
+
+fn main() {
+    let key: [u8; 32] = rand::thread_rng().gen();
+    xor_encrypt("test.txt", key).unwrap();
+    println!("文件已加密");
+}
+
+
+测试样例3：
+use rand::Rng;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::collections::HashMap;
+
+struct DataProcessor {
+    cache: Arc<Mutex<HashMap<u32, String>>>,
+    rng: rand::rngs::ThreadRng,
+}
+
+impl DataProcessor {
+    fn new() -> Self {
+        Self {
+            cache: Arc::new(Mutex::new(HashMap::new())),
+            rng: rand::thread_rng(),
+        }
+    }
+
+    fn generate_data(&mut self) -> (u32, String) {
+        let id = self.rng.gen_range(1..=1000);
+        let value = (0..5)
+            .map(|_| self.rng.gen_range(b'A'..=b'Z') as char)
+            .collect();
+        (id, value)
+    }
+
+    fn start_workers(&self, num_workers: usize) {
+        let handles: Vec<_> = (0..num_workers)
+            .map(|i| {
+                let cache = self.cache.clone();
+                thread::spawn(move || {
+                    let mut local_rng = rand::thread_rng();
+                    for _ in 0..10 {
+                        let key = local_rng.gen_range(1..=1000);
+                        let value: String = (0..5)
+                            .map(|_| local_rng.gen_range(b'a'..=b'z') as char)
+                            .collect();
+                        
+                        let mut map = cache.lock().unwrap();
+                        map.entry(key)
+                            .and_modify(|v| *v = value.clone())
+                            .or_insert(value);
+                    }
+                    println!("Worker {} 完成", i);
+                })
+            })
+            .collect();
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+    }
+}
+
+fn main() {
+    let processor = DataProcessor::new();
+    processor.start_workers(4);
+    
+    let cache = processor.cache.lock().unwrap();
+    println!("生成{}条数据:", cache.len());
+    for (k, v) in cache.iter().take(5) {
+        println!("ID {} => {}", k, v);
+    }
+}
+
+
+测试样例4：
+use std::io;use rand::Rng;
+
+fn main() {
+    println!("Guess the number:");
+
+    let secret_number = rand::thread_rng().gen_range(1..101);
+
+    println!("secret_number:{}",secret_number);
+
+    let mut guess = String::new();
+
+    io::stdin().read_line(&mut guess).expect("Failed to read line");
+
+    println!("You guessed: {}", guess);
+}
+
+
+测试样例5：
+//! 斐波那契数列计算器（文档注释：模块级说明）[3,5](@ref)
+
+/// 计算第n项斐波那契数列（文档注释：函数说明）[3,6](@ref)
+/// # 参数
+/// * `n` - 非负整数
+/// # 返回值
+/// * `u64`类型计算结果
+fn fibonacci(n: u32) -> u64 {
+    // 使用元组进行迭代计算（行注释）[8](@ref)
+    let (mut a, mut b) = (0, 1);
+    for _ in 0..n {
+        (a, b) = (b, a + b); // 同时更新两个值[7](@ref)
+    }
+    a // 隐式返回[4](@ref)
+}
+
+fn main() {
+    // 获取用户输入（行注释）[4,8](@ref)
+    println!("请输入正整数：");
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("读取失败"); // 错误处理[4](@ref)
+
+    /* 转换并计算结果（块注释）[2](@ref) */
+    match input.trim().parse::<u32>() {
+        Ok(n) => println!("结果：{}", fibonacci(n)),
+        Err(_) => println!("请输入有效数字！") // 模式匹配处理错误[6](@ref)
+    }
+}

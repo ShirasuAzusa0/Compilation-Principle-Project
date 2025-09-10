@@ -1,0 +1,138 @@
+// 选做部分
+// 提供窗口以便用户查看使用LR(1)分析该句子的过程。【可以使用表格的形式逐行显示分析过程】
+void doLR1Parse(const QStringList& inputTokens, QStandardItemModel *parseModel)
+{
+    // 构建分析表
+    getLR1();
+    buildLR1Table();
+
+    // 初始化：状态栈、符号栈、输入指针
+    vector<int> stateStack;
+    QStringList symbolStack;
+    stateStack.push_back(0);
+    symbolStack.push_back("$");
+
+    // 输入指针
+    int ip = 0;
+    QStringList tokens = inputTokens;
+
+    while (true) {
+        int curState = stateStack.back();
+        QString a = tokens[ip];
+
+        // 查 ACTION 表
+        auto itAct = ACTION[curState].find(a.toStdString());
+        QString actionStr;
+        if (itAct == ACTION[curState].end()) {
+            actionStr = "error";
+        } else {
+            const Action& act = itAct->second;
+            switch (act.act) {
+            case Action::SHIFT:
+                actionStr = QString("s%1").arg(act.num);
+                // 记录当前行
+                parseModel->appendRow(QList<QStandardItem*>{
+                    new QStandardItem(symbolStack.join(" ") + " | " + QString::number(stateStack.back())),
+                    new QStandardItem(tokens.mid(ip).join(" ")),
+                    new QStandardItem(actionStr)
+                });
+                // 执行 shift
+                symbolStack.push_back(a);
+                stateStack.push_back(act.num);
+                ip++;
+                break;
+
+            case Action::REDUCE: {
+                int rid = act.num;
+                auto& prod = grammar_deque[rid];
+                // 右部符号数
+                int k = splitSymbols(prod.right).size();
+                // 记录当前行
+                parseModel->appendRow(QList<QStandardItem*>{
+                    new QStandardItem(symbolStack.join(" ") + " | " + QString::number(stateStack.back())),
+                    new QStandardItem(tokens.mid(ip).join(" ")),
+                    new QStandardItem(QString("r%1(%2→%3)")
+                                      .arg(rid)
+                                      .arg(QString::fromStdString(prod.left))
+                                      .arg(QString::fromStdString(prod.right)))
+                });
+                // 执行 reduce：弹出 k 个符号和 k 个状态
+                for (int i = 0; i < k; ++i) {
+                    symbolStack.pop_back();
+                    stateStack.pop_back();
+                }
+                // 压入左部非终结符
+                QString A = QString::fromStdString(prod.left);
+                symbolStack.push_back(A);
+                // GOTO
+                int gotoState = GOTO_[ stateStack.back() ][ prod.left ];
+                stateStack.push_back(gotoState);
+                break;
+            }
+
+            case Action::ACCEPT:
+                // 记录最后一行
+                parseModel->appendRow(QList<QStandardItem*>{
+                    new QStandardItem(symbolStack.join(" ") + " | " + QString::number(stateStack.back())),
+                    new QStandardItem("$"),
+                    new QStandardItem("acc")
+                });
+                QMessageBox::information(nullptr, "结果", "句子被成功接受！");
+                return;
+
+            default:
+                QMessageBox::critical(nullptr, "错误", "出现无法识别的动作！");
+                return;
+            }
+        }
+
+        // 若出错，则跳出
+        if (actionStr == "error") {
+            QMessageBox::warning(nullptr, "错误", "分析过程出现错误，无法继续");
+            return;
+        }
+    }
+}
+
+void Widget::on_pushButton_sentence_clicked()
+{
+    grammar_map.clear();
+    grammar_deque.clear();
+    nonTerminals.clear();
+    states.clear();
+    trans.clear();
+    firstSet.clear();
+    followSet.clear();
+    startSymbol.clear();
+    trueStartSymbol.clear();
+
+    grammar_str = ui->plainTextEdit->toPlainText().toStdString();
+    handleGrammar();
+    getFirstSet();
+    getfollowSet();
+
+    QStandardItemModel *parseModel = new QStandardItemModel(this);
+    // 设置 parseModel 表头
+    parseModel->setHorizontalHeaderLabels(
+            QStringList() << "栈" << "剩余输入" << "动作");
+        ui->tableView_LR1Tokens->setModel(parseModel);
+        ui->tableView_LR1Tokens->horizontalHeader()->setSectionResizeMode(
+            QHeaderView::Stretch);
+
+    QString inputTokens = ui->plainTextEdit_sentence->toPlainText().trimmed();
+    if(inputTokens.isEmpty())
+    {
+        QMessageBox::warning(this, "提示", "待分析的句子不能为空");
+        return ;
+    }
+    // 按空格分词
+       QStringList tokens = inputTokens.split(' ', QString::SkipEmptyParts);
+       // 加上结束符
+       tokens << "$";
+
+       // 清空旧结果
+       parseModel->removeRows(0, parseModel->rowCount());
+
+       // 执行 LR(1) 分析，逐步向 parseModel 中添加行
+       doLR1Parse(tokens, parseModel);
+}

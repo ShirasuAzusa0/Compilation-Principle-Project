@@ -1,0 +1,7 @@
+本次开发使用的是Qt，其编译方式如下：
+首先，在Qt creator中切换为Release模式；
+然后找到输出文件夹，里面有对应的可运行的Compilation_principle_experiment5.exe文件
+进入qt的命令行终端，进入当前输出文件夹，在终端输入命令行：
+windeployqt Compilation_principle_experiment4.exe
+之后即可得到带有环境的可执行的exe文件；
+编译完成后，直接双击Compilation_principle_experiment4.exe即可运行

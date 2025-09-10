@@ -1,0 +1,56 @@
+例1：
+E->E + T 
+T->a
+
+例2：
+exp -> exp addop term | term
+addop -> + | -
+term -> term mulop factor | factor
+mulop -> * | /
+factor -> ( exp ) | n
+
+例3：
+A -> a B 
+A -> a 
+B -> A | b 
+
+例4：
+statement -> ifstmt | other 
+ifstmt -> if ( cond ) statement | if ( cond ) statement else statement 
+cond -> true | false
+
+例5：
+E->E + T | T 
+T->a
+
+移进-规约冲突示例：
+S -> A a | A b
+A -> ε | a
+
+规约-规约冲突示例：
+S -> A
+A -> a
+A -> a
+
+移进-规约、规约-规约均冲突示例：
+S -> X a 
+S -> Y a 
+X -> ε 
+X -> a 
+Y -> ε 
+Y -> a 
+
+是SLR(1)示例：
+E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id
+
+选做内容测试样例：
+文法：
+exp -> exp addop term | term
+addop -> + | -
+term -> term mulop factor | factor
+mulop -> * | /
+factor -> ( exp ) | n
+语句：
+n + n * ( n - n ) / n

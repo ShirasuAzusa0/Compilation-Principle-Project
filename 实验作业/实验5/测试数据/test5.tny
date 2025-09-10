@@ -1,0 +1,14 @@
+if x < y then
+    if x < z then
+        min := x
+    else
+        min := z
+    end
+else
+    if y < z then
+        min := y
+    else
+        min := z
+    end
+end
+write min ;

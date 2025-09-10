@@ -1,0 +1,1 @@
+先编译，然后双击Compilation_principle_experiment3.exe可执行程序即可运行

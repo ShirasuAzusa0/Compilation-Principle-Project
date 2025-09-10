@@ -1,0 +1,12 @@
+{test 1}
+if (0 < x) [
+     for (fact := 1; x > 0; --x)
+        [fact := fact * x];
+    read x;
+    while( x>0 ) 
+       [fact := fact * x;
+       --x]
+endwhile
+];
+write fact; { output factorial of x }
+read fact

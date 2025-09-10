@@ -1,0 +1,46 @@
+// 选做内容：提供窗口以便用户输入需要分析的句子
+// 对语句进行LR(1)分析并生成分析表的按钮控件
+    void on_pushButton_sentence_clicked();
+
+void Widget::on_pushButton_sentence_clicked()
+{
+    grammar_map.clear();
+    grammar_deque.clear();
+    nonTerminals.clear();
+    states.clear();
+    trans.clear();
+    firstSet.clear();
+    followSet.clear();
+    startSymbol.clear();
+    trueStartSymbol.clear();
+
+    grammar_str = ui->plainTextEdit->toPlainText().toStdString();
+    handleGrammar();
+    getFirstSet();
+    getfollowSet();
+
+    QStandardItemModel *parseModel = new QStandardItemModel(this);
+    // 设置 parseModel 表头
+    parseModel->setHorizontalHeaderLabels(
+            QStringList() << "栈" << "剩余输入" << "动作");
+        ui->tableView_LR1Tokens->setModel(parseModel);
+        ui->tableView_LR1Tokens->horizontalHeader()->setSectionResizeMode(
+            QHeaderView::Stretch);
+
+    QString inputTokens = ui->plainTextEdit_sentence->toPlainText().trimmed();
+    if(inputTokens.isEmpty())
+    {
+        QMessageBox::warning(this, "提示", "待分析的句子不能为空");
+        return ;
+    }
+    // 按空格分词
+       QStringList tokens = inputTokens.split(' ', QString::SkipEmptyParts);
+       // 加上结束符
+       tokens << "$";
+
+       // 清空旧结果
+       parseModel->removeRows(0, parseModel->rowCount());
+
+       // 执行 LR(1) 分析，逐步向 parseModel 中添加行
+       doLR1Parse(tokens, parseModel);
+}

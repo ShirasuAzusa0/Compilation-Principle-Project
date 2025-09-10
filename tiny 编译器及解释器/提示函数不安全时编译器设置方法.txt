@@ -1,0 +1,9 @@
+
+对于win32 / msvc，在ProjectProperties->配置属性-> C / C ++
+-> Preprocessor-> Preprocessor Definitions中，添加以下宏：
+
+1   _CRT_SECURE_NO_DEPRECATE  
+2  _CRT_NONSTDC_NO_DEPRECATE
+
+
+ _CRT_SECURE_NO_DEPRECATE ;_CRT_NONSTDC_NO_DEPRECATE

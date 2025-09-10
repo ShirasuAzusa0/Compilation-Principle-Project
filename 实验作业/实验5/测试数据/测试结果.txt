@@ -1,0 +1,111 @@
+read x;
+if x < 10 then
+    y := ( x + 1 ) * 2
+else
+    y := x - 1
+end
+repeat
+    z := y / 2
+    y := z
+until y = 0;
+write y;
+
+
+ 0:	(read, x, , )
+ 1:	(<, x, 10, t1)
+ 2:	(ifFalse, t1, goto, L1)
+ 3:	(+, x, 1, t2)
+ 4:	(*, t2, 2, t3)
+ 5:	(:=, t3, , y)
+ 6:	(goto, , , L2)
+ 7:	(label, , , L1)
+ 8:	(-, x, 1, t4)
+ 9:	(:=, t4, , y)
+10:	(label, , , L2)
+11:	(label, , , L3)
+12:	(/, y, 2, t5)
+13:	(:=, t5, , z)
+14:	(:=, z, , y)
+15:	(==, y, 0, t6)
+16:	(ifFalse, t6, goto, L3)
+17:	(write, y, , )
+
+a := b + c * d ;
+write a ;
+
+ 0:	(*, c, d, t1)
+ 1:	(+, b, t1, t2)
+ 2:	(:=, t2, , a)
+ 3:	(write, a, , )
+
+read x;
+while x > 0 do
+    x := x - 1
+    write x
+enddo
+
+ 0:	(read, x, , )
+ 1:	(label, , , L1)
+ 2:	(>, x, 0, t1)
+ 3:	(ifFalse, t1, goto, L3)
+ 4:	(label, , , L2)
+ 5:	(-, x, 1, t2)
+ 6:	(:=, t2, , x)
+ 7:	(write, x, , )
+ 8:	(goto, , , L1)
+ 9:	(label, , , L3)
+
+read x ;
+for (fact := 1; x > 0; --x)
+        [fact := fact * x;]
+write fact ;
+
+ 0:	(read, x, , )
+ 1:	(:=, 1, , fact)
+ 2:	(label, , , L1)
+ 3:	(>, x, 0, t1)
+ 4:	(ifFalse, t1, goto, L3)
+ 5:	(label, , , L2)
+ 6:	(*, fact, x, t2)
+ 7:	(:=, t2, , fact)
+ 8:	(-, x, 1, t3)
+ 9:	(:=, t3, , x)
+10:	(goto, , , L1)
+11:	(label, , , L3)
+12:	(write, fact, , )
+
+if x < y then
+    if x < z then
+        min := x
+    else
+        min := z
+    end
+else
+    if y < z then
+        min := y
+    else
+        min := z
+    end
+end
+write min ;
+
+ 0:	(<, x, y, t1)
+ 1:	(ifFalse, t1, goto, L1)
+ 2:	(<, x, z, t2)
+ 3:	(ifFalse, t2, goto, L3)
+ 4:	(:=, x, , min)
+ 5:	(goto, , , L4)
+ 6:	(label, , , L3)
+ 7:	(:=, z, , min)
+ 8:	(label, , , L4)
+ 9:	(goto, , , L2)
+10:	(label, , , L1)
+11:	(<, y, z, t3)
+12:	(ifFalse, t3, goto, L5)
+13:	(:=, y, , min)
+14:	(goto, , , L6)
+15:	(label, , , L5)
+16:	(:=, z, , min)
+17:	(label, , , L6)
+18:	(label, , , L2)
+19:	(write, min, , )
