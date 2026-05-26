@@ -12,4 +12,4 @@
 
 ## 相关链接
 
-施工中
+2023级编译原理课程项目（能保底70分，大概）请参考：https://github.com/ShirasuAzusa0/Complication_Principle_Project
