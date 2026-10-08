@@ -16,9 +16,13 @@
 
 一些有用的辅助网站：
 正则转NFA：https://cyberzhg.github.io/toolbox/regex2nfa
+
 NFA转DFA：https://cyberzhg.github.io/toolbox/nfa2dfa
+
 DFA最小化：https://cyberzhg.github.io/toolbox/min_dfa
+
 求first和follow集合：https://cyberzhg.github.io/toolbox/first_follow
+
 求LR0图/SLR1表：https://cyberzhg.github.io/toolbox/lr0
 
 复习参考资料：
