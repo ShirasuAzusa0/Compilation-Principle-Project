@@ -15,6 +15,7 @@
 2023级编译原理课程项目（能保底70分，大概）请参考：https://github.com/ShirasuAzusa0/Complication_Principle_Project
 
 一些有用的辅助网站：
+
 正则转NFA：https://cyberzhg.github.io/toolbox/regex2nfa
 
 NFA转DFA：https://cyberzhg.github.io/toolbox/nfa2dfa
@@ -26,5 +27,7 @@ DFA最小化：https://cyberzhg.github.io/toolbox/min_dfa
 求LR0图/SLR1表：https://cyberzhg.github.io/toolbox/lr0
 
 复习参考资料：
+
 2023版本：https://pan.baidu.com/s/1J6z6AZbrQ7UxNE6lXlQyDQ?pwd=a97k 提取码: a97k
+
 2021版本：https://axt9hz09lxr.feishu.cn/wiki/BfDrwX0xWiy0jvkNHHTcoWDknjh?edition_id=k8C7jH
